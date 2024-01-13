@@ -1,0 +1,120 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap');
+    .screen{
+        min-height: 65vh;
+        display: flex;
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+        width: 100vw;
+    }
+    .participant-left{
+        width: 50%;
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .participant-right{
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+    }
+    .LeaderBoard-heading{
+        font-size: 30px;
+        text-decoration: underline;
+        padding-bottom: 20px;
+    }
+    .LeaderBoard{
+        /* border: 1px solid black; */
+        padding: 10px;
+        width: 80%;
+        
+    }
+    .ranking{
+        border-bottom: 1px solid black;
+        margin-bottom: 10px;
+        font-weight: 400;
+        font-size: 25px;
+    }
+    .ranking-name{
+        display: inline-block;
+        width: 25vw;
+        text-align: center;
+    }
+    #event-box{
+        display: none;
+    }
+    #countdown-box{
+        font-size: 20px;
+        margin-bottom: 20px;
+        font-size: 30px;
+    }
+    .code-input-box{
+        margin-top: 20px;
+    }
+    label{
+        font-size: 1rem;
+        font-weight: 700;
+    }
+    input{
+        width: 250px;
+        height: 40px;
+        border: 1px solid #1deff1;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        padding: 5px;
+        margin-top: 20px;
+    }
+    .btn{
+        background-color: #467fcf;
+        color: white;
+        margin-bottom: 5px;
+        width: 250px;
+        height: 30px;
+        border-radius: 10px;
+        border: none;
+        font-size: 18px;
+        font-weight: 400;
+    }
+    @media(max-width:767px){
+        .screen{
+            flex-direction: column;
+            padding-top: 15px;
+            gap: 30px;
+        }
+        .participant-left{
+            width: 100vw;
+        }
+        .LeaderBoard{
+            width: 90%;
+        }
+        .ranking-name{
+            width: 50vw;
+            font-size: 6vmin;
+        }
+        .rank{
+            font-size: 6vmin;
+        }
+        .participant-right{
+            width: 100vw;
+            padding-inline: 20px;
+        }
+        #countdown-box{
+            text-align: center;
+            font-size: 6vmin;
+        }
+
+    }    
+</style>
+{% include 'participant_main.html' %}
+<div class="screen">
+{% block content %}
+{% if request.user.is_authenticated %}
+<div class="participant-left">
+    <h3 class="LeaderBoard-heading">Leaderboard</h3>
+</div>
+{% endif %}
+{% endblock %}

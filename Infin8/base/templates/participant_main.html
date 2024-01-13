@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynergyX8Bit</title>
+</head>
+<body>
+    <style>
+         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        .messages{
+            background-color: #f8f9fa;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Poppins', sans-serif;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            padding-bottom: 100px;
+        }
+        .ul{
+            width: auto;
+            border: 1px solid black;
+            border-radius: 5px;
+            padding-inline: 30px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-right: 10px;
+            list-style: none;
+            font-size: 30px;
+        }
+        @media(max-width:767px){
+            .messages{
+                padding-top: 20px;
+                padding-left: 0;
+                align-items: center;
+                padding-bottom: 0;
+            }
+            .ul{   
+                font-size: 6vmin;
+                margin: 0;
+                text-align: center;
+                padding-inline: 10px;
+            }
+        }
+    </style>
+    {% include 'participant_navbar.html' %}
+    {% if messages %}
+    <div class="messages">
+        <ul class="ul">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    {% block content %}
+    {% endblock content %}
+</body>
+</html>
