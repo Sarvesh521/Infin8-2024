@@ -10,7 +10,7 @@ def loginPage(request):
         return redirect('participant_home') 
 
     if request.method == 'POST':
-        email = request.POST.get('email')
+        email = request.POST.get('email').lower()
         password = request.POST.get('password')
         try:
             user = User.objects.get(email=email)
