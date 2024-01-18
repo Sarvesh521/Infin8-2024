@@ -112,9 +112,28 @@
 {% include 'participant_main.html' %}
 <div class="screen">
 {% block content %}
-{% if request.user.is_authenticated %}
 <div class="participant-left">
     <h3 class="LeaderBoard-heading">Leaderboard</h3>
+    <div class="LeaderBoard">
+        {% for user in users %}
+        <div class="ranking">
+            <p class="rank">{{ forloop.counter }}. &nbsp;&nbsp;&nbsp; <span class="ranking-name">{{ user.username }}</span> &nbsp;&nbsp;&nbsp;{{ user.points }}</h1>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+{% if request.user.is_authenticated %}
+<div class="participant-right">
+    <div class="code-input-box">
+        <h2>Mark Your Attendance here !</h2>
+        <form method="post" action="{% url 'participant_home' %}">
+            {% csrf_token %}
+            <input type="text" id="text_input" name="text_input" required>
+            <br>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
+</div>
+
 {% endif %}
 {% endblock %}

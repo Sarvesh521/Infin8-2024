@@ -2,10 +2,33 @@ from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import MyUserCreationForm
 from django.contrib import messages
-from .models import User
+from .models import User,Code
 import uuid
 from .utils import send_email_token
 from django.http import HttpResponse 
+
+d={
+    'code_1':1,
+    'code_2':2,
+    'code_3':3,
+    'code_4':4,
+    'code_5':5,
+    'code_6':6,
+    'code_7':7,
+    'code_8':8,
+    'code_9':9,
+    'code_10':10,
+    'code_11':11,
+    'code_12':12,
+    'code_13':13,
+    'code_14':14,
+    'code_15':15,
+    'code_16':16,
+    'code_17':17,
+}
+k_l=list(d.keys())
+v_l=list(d.values())
+
 def loginPage(request): 
     page = 'login'
     if request.user.is_authenticated:
@@ -54,9 +77,29 @@ def registerPage(request):
 
 
 def participant_home(request):
-    user_1= User.objects.get(email=str(request.user))
+    if request.method == 'POST':
+            user_1= User.objects.get(email=str(request.user))
+            a=request.POST.get('text_input').strip().lower()
+            passcode = list(Code.objects.filter(user=request.user).values())
+            new_arr=[]
+            for x in passcode:
+                new_arr.append(x['data_item'])
+            if a not in new_arr:
+                if a in k_l:
+                    Code.objects.create(
+                    user=user_1,
+                    data_item=a,
+                    )
+                    user_1.points +=d[a]
+                    user_1.save()
+                else:
+                    messages.error(request,'Attendance code is not valid')
+            else:
+                messages.error(request,'You have already got points for submitting the above code . This is a repeat submission') 
+
+    users=User.objects.all().order_by('-points').values()
     context = {
-        'user_1':user_1,
+        'users': users,
     }
     return render(request, 'participant_home.html', context)
 
