@@ -123,6 +123,7 @@
     </div>
 </div>
 {% if request.user.is_authenticated %}
+    {% if flag %}
 <div class="participant-right">
     <div class="code-input-box">
         <h2>Mark Your Attendance here !</h2>
@@ -133,6 +134,18 @@
             <button type="submit" class="btn">Submit</button>
         </form>
     </div>
+    {% else %}
+    <div class="code-input-box">
+        <h2>Enter the event code here !</h2>
+        <form method="post" action="{% url 'participant_home' %}">
+            {% csrf_token %}
+            <input type="text" id="text_input" name="text_input" required>
+            <br>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
+
+    {% endif %}
 </div>
 
 {% endif %}
