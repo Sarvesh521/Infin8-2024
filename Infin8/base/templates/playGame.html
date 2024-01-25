@@ -1,0 +1,119 @@
+{% include 'participant_main.html' %}
+<div class="screen">
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>Game</title>
+    <h1>Game</h1>
+    <h2>7up & 7down</h2>
+    <h3>How to play</h3>
+    <p>1. The left column contains requests and the right column contains the requests received </p>
+    
+    <h3>Rules</h3>
+    <p>1. You have to guess whether the next number will be greater than 7 or less than 7.</p>
+    <p>2. If you lose, you lose that many points mentioned in the request</p>
+    <p>3. If you win, you get that many points mentioned in the request</p>
+    <p>4. While posting a request, you can only post request for atmost the number of points you have</p>
+    <p>5. You can post at most 5 requests a day</p>
+    
+    <h3>Points: {{user.points}}         Requests Left: {{user.requests_left}} </h3>
+    
+    <div class="container">
+        <div class="left-column">
+            <h3>Requests Sent</h3>
+            <!-- Add your requests content here -->
+            <form method="POST" action="{% url 'playGame' %}">
+                {% csrf_token %}
+                <label for="points">Choose the number of points to bet:</label>
+                <select name="points" id="points">
+                    <option value=0>0</option>
+                    <option value=5>5</option>
+                    <option value=10>10</option>
+                    <option value=20>20</option>
+                </select>
+                <br><br>
+
+                <label for="num1">Choose 3 numbers:</label>
+                <select name="num1" id="num1">
+                    <option value=1>1</option>
+                    <option value=2>2</option>
+                    <option value=3>3</option>
+                    <option value=4>4</option>
+                    <option value=5>5</option>
+                    <option value=6>6</option>
+                    <option value=8>8</option>
+                    <option value=9>9</option>
+                    <option value=10>10</option>
+                    <option value=11>11</option>
+                    <option value=12>12</option>
+                    <option value=13>13</option>
+                </select>
+                <label for="num2"></label>
+                <select name="num2" id="num2">
+                    <option value=1>1</option>
+                    <option value=2>2</option>
+                    <option value=3>3</option>
+                    <option value=4>4</option>
+                    <option value=5>5</option>
+                    <option value=6>6</option>
+                    <option value=8>8</option>
+                    <option value=9>9</option>
+                    <option value=10>10</option>
+                    <option value=11>11</option>
+                    <option value=12>12</option>
+                    <option value=13>13</option>
+                </select>
+                <label for="num3"></label>
+                <select name="num3" id="num3">
+                    <option value=1>1</option>
+                    <option value=2>2</option>
+                    <option value=3>3</option>
+                    <option value=4>4</option>
+                    <option value=5>5</option>
+                    <option value=6>6</option>
+                    <option value=8>8</option>
+                    <option value=9>9</option>
+                    <option value=10>10</option>
+                    <option value=11>11</option>
+                    <option value=12>12</option>
+                    <option value=13>13</option>
+                </select>
+                <br><br>
+                <input type="submit" name="action" value="make_request"/>
+               
+            </form>
+            
+            {% for outrequest in out_requests %}
+                <div>
+                    <p> Request:  </p> <p> Points: {{ outrequest.points }}</p> <p>Status: {{ outrequest.game_status}} </p>
+                    <br><br/>
+                </div>
+            {% endfor %}    
+        </div>
+        <div class="right-column">
+            <h3>Requests Received</h3>
+                {% for in_request in in_requests %}
+                    <div>
+                        <p> Request: </p> <a href="{% url 'acceptGame' in_request.game_link %}"/>GameLink</a> <p> Points: {{ in_request.points }}</p>
+                                                
+                        <br><br/>
+                    
+                    </div>
+                    
+                {% endfor %}
+
+        </div>
+    </div>
+
+    
+
+</head>
+<body>
+    
+</body>
+</html>
+
+{% endblock %}

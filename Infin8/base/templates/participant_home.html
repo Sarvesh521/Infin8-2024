@@ -134,6 +134,12 @@
             <button type="submit" class="btn">Submit</button>
         </form>
     </div>
+    <div class="nav-center">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'playGame' %}" class="logout-button">Play Game</a>
+        
+        {% endif %}
+    </div>
     {% else %}
     <div class="code-input-box">
         <h2>Enter the event code here !</h2>
@@ -147,6 +153,8 @@
 
     {% endif %}
 </div>
+
+
 
 {% endif %}
 {% endblock %}

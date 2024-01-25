@@ -1,0 +1,19 @@
+{% include 'participant_main.html' %}
+<div class="screen">
+{% block content %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <h1>Do you wanna Accept or Decline the request?</h1>
+    <form method="POST" action="{% url 'acceptGame' game_link %}">
+        {% csrf_token %}
+        <button type="submit" name="confirm" value="accept">Accept</button>
+        <button type="submit" name="confirm" value="decline">Decline</button>
+
+</html>
+
+
+{% endblock %}
