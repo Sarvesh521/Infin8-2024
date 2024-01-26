@@ -9,19 +9,24 @@ from django.http import HttpResponse
 from django.db.models import Q
 from .models import IncomingRequest, OutgoingRequest
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
+import pytz
 
 
 
-
-def check(request):
+def check(request):     #deletes requests which have their time over 2hrs
     out_requests = OutgoingRequest.objects.filter(sender=request.user)
     in_requests = IncomingRequest.objects.filter(receiver=request.user)
     for out_req in out_requests:
-        if(out_req.game_status=='pending' and datetime.now(timezone.utc)-out_req.request_time>timedelta(minutes=1)):
-           out_req.delete() 
+        time = datetime.now(pytz.timezone('Asia/Kolkata'))-timedelta(hours=2)
+        if(out_req.game_status=='pending' and out_req.request_time<time):
+            request.user.worst_case_points+=int(out_req.points)
+            request.user.requests_left+=1
+            out_req.delete() 
     for in_req in in_requests:
-        if(in_req.game_status=='pending' and datetime.now()-in_req.request_time>timedelta(minutes=1)):
+        time = datetime.now(pytz.timezone('Asia/Kolkata'))-timedelta(hours=2)
+        if(in_req.game_status=='pending' and in_req.request_time<time):
+            in_req.receiver.worst_case_points+=int(in_req.points)
             in_req.delete()
     return        
 
@@ -155,6 +160,7 @@ def playGame(request):
     if request.user.is_authenticated:
         sender= User.objects.get(email=str(request.user))
         if sender.admin==True:
+            messages.error(request, 'Admins are not allowed to play the Game')
             return render(request,'participant_home.html')
         
             #main game logic
@@ -166,12 +172,12 @@ def playGame(request):
 
             if(sender.requests_left<=0):
                 messages.error(request, 'Daily Limits for requests reached')
-                #return render(request,'playGame.html', context)
+                
             elif(sender.worst_case_points>=int(points)):
                 receiver = User.objects.filter(Q(worst_case_points__gte=int(points)) & ~Q(email=sender.email) & Q(admin=False)).order_by('?').first()
                 game_link = str(uuid.uuid4())
                 if(receiver==None):
-                    messages.error(request, 'No other user is available to play this game')
+                    messages.error(request, 'No other user is available to play this game, Please wait until there are acive users.')
                 
                 else:
                     OutgoingRequest.objects.create(
@@ -198,7 +204,10 @@ def playGame(request):
                     receiver.save()
                     messages.success(request,'Game request sent')
             else:
-                messages.error(request,'You do not have enough points or requests to play this game, please accept/decline requests pending')
+                if(sender.points<points):
+                    messages.error(request, 'You do not have enough points or requests to play this game')
+                else:
+                    messages.error(request,'Please accept/decline pending requests to play the game')
         
         out_requests = OutgoingRequest.objects.filter(sender=sender)
         in_requests = IncomingRequest.objects.filter(receiver=sender)
