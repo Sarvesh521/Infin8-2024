@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
+
+TIME_ZONE = 'UTC'
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -33,11 +36,14 @@ class Attendance(models.Model):
 
     def __str__(self) -> str:
         return self.code
-    
+
+
+def default_valid_until():
+    return datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(hours=2)
 
 class OutgoingRequest(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    request_time = models.DateTimeField(auto_now_add=True)
+    valid_until = models.DateTimeField(default=default_valid_until)
 
     game_link = models.CharField(max_length=255)
     game_status = models.CharField(max_length=255,default="pending")
@@ -56,15 +62,42 @@ class OutgoingRequest(models.Model):
 
 class IncomingRequest(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE)
-
     request_time = models.DateTimeField(auto_now_add=True)
+    valid_until = models.DateTimeField(default=default_valid_until)
+    
     game_link = models.CharField(max_length=255)
     game_status = models.CharField(max_length=255,default="pending")
 
-    num1 = models.IntegerField()
-    num2 = models.IntegerField()
-    num3 = models.IntegerField()
+    play1 = models.BooleanField(default=False)  #false if lesser than 7 else true
+    play2 = models.BooleanField(default=False)
+    play3 = models.BooleanField(default=False)
     points = models.IntegerField()
     
     def __str__(self) -> str:
         return str(self.game_link)
+    
+
+# class Status(models.Model):
+#     sender_email = models.CharField(max_length=255)
+#     receiver_email = models.CharField(max_length=255)
+
+#     game_link = models.CharField(max_length=255)
+#     game_status = models.CharField(max_length=255,default="pending")
+
+#     sender_wins = models.IntegerField(default=0)
+#     receiver_wins = models.IntegerField(default=0)
+
+#     #sender
+#     num1 = models.IntegerField()
+#     num2 = models.IntegerField()
+#     num3 = models.IntegerField()
+
+#     #receiver
+#     play1 = models.BooleanField(default=False)  #false if lesser than 7 else true
+#     play2 = models.BooleanField(default=False)
+#     play3 = models.BooleanField(default=False)
+
+
+#     def __str__(self) -> str:
+#         return str(self.game_link)    
+
