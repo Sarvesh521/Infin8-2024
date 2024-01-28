@@ -23,18 +23,20 @@
     <script>        
         const validUntil = new Date("{{ valid_until|date:'Y-m-d H:i:s' }}").getTime();
         const z = document.getElementById('countdown');
+
         setInterval(function() {
-            const now = new Date().getTime(); // Get the current UTC time in milliseconds
+            const now = new Date().getTime(); 
             const diff = validUntil - now;
-        
-            const time_zone_offset = 5.5*60*60;   //adding the offset time
-            
-            const secondsRemaining = Math.floor(diff / 1000) + time_zone_offset;
+                    
+            const secondsRemaining = Math.floor(diff / 1000);
         
             if (secondsRemaining > 0) {
                 z.innerHTML = "Time left: " + secondsRemaining + " seconds";
             } else {
                 z.innerHTML = "Game's over by default, You have Lost!";
+                setTimeout(function() {
+                    location.reload(); 
+                }, 5000); // Refresh after 5 seconds
             }
         }, 1000);
     </script>
