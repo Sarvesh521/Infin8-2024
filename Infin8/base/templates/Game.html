@@ -1,0 +1,45 @@
+{% include 'participant_main.html' %}
+<div class="screen">
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <form method="POST" action="{% url 'Game' game_link %}">
+        {% csrf_token %}
+        
+        <label for="choice">Round Won: {{wins}} and Round {{turn}}: </label>
+        <select name="choice" id="choice">
+            <option value='True'>greater than 7</option>
+            <option value='False'>lesser than 7</option>
+        
+        </select>
+        <br><br>
+        <input type="submit" name="action" value="submit"/>
+       
+    </form>
+
+    <div id="countdown"></div>
+    <script>        
+        const validUntil = new Date("{{ valid_until|date:'Y-m-d H:i:s' }}").getTime();
+        const z = document.getElementById('countdown');
+        setInterval(function() {
+            const now = new Date().getTime(); // Get the current UTC time in milliseconds
+            const diff = validUntil - now;
+        
+            const time_zone_offset = 5.5*60*60;   //adding the offset time
+            
+            const secondsRemaining = Math.floor(diff / 1000) + time_zone_offset;
+        
+            if (secondsRemaining > 0) {
+                z.innerHTML = "Time left: " + secondsRemaining + " seconds";
+            } else {
+                z.innerHTML = "Game's over by default, You have Lost!";
+            }
+        }, 1000);
+    </script>
+    </body>
+
+</html>
+
+{% endblock %}
