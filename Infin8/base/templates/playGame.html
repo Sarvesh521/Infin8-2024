@@ -97,7 +97,7 @@
             <h3>Requests Received</h3>
                 {% for in_request in in_requests %}
                     <div>
-                        <p> Request: </p> <a href="{% url 'acceptGame' in_request.game_link %}"/>GameLink</a> <p> Points: {{ in_request.points }}</p>
+                        <p> Request: </p> <a href="{% url 'confirmGame' in_request.game_link %}"/>GameLink</a> <p> Points: {{ in_request.points }}</p>
                                                 
                         <br><br/>
                     
