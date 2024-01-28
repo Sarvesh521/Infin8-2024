@@ -86,9 +86,11 @@
                
             </form>
             
-            {% for outrequest in out_requests %}
+            {% for out_request in out_requests %}
                 <div>
-                    <p> Request:  </p> <p> Points: {{ outrequest.points }}</p> <p>Status: {{ outrequest.game_status}} </p>
+                    <br><br/>
+                    <p> Points: {{ out_request.points }}</p> <p>Status: {{ out_request.game_status}} </p>
+                    <p>Request sent on: {{out_request.valid_until}}</p>
                     <br><br/>
                 </div>
             {% endfor %}    
@@ -97,8 +99,9 @@
             <h3>Requests Received</h3>
                 {% for in_request in in_requests %}
                     <div>
+                        <br><br/>
                         <p> Request: </p> <a href="{% url 'confirmGame' in_request.game_link %}"/>GameLink</a> <p> Points: {{ in_request.points }}</p>
-                                                
+                        <p>Request valid till: {{in_request.valid_until}}</p>  
                         <br><br/>
                     
                     </div>
