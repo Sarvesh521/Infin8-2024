@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from datetime import datetime, timedelta
 import pytz
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
