@@ -10,8 +10,9 @@ urlpatterns = [
     path('verify/<token>',views.verify,name="verify"),
 
     path('playGame/',views.playGame,name="playGame"),
-    path('playGame/<str:game_link>/', views.Game, name="acceptGame"),
-    path('playGame/<str:game_link>/thegame', views.acceptRequest, name="theGame"),
+    path('playGame/<str:game_link>/', views.confirmGame, name="confirmGame"),
+    path('playGame/<str:game_link>/game', views.Game, name="Game"),
+    #path('playGame/<str:game_link>/status', views.Status, name="statusGame"),
     
     path('password_reset/',auth_views.PasswordResetView.as_view(template_name='password_reset.html'),name='password_reset'),
     path('password_reset/done/',auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'),name='password_reset_done'),
