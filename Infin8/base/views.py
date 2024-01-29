@@ -7,7 +7,7 @@ import uuid
 from .utils import send_email_token
 from django.http import HttpResponse 
 from django.db.models import Q
-from .models import IncomingRequest, OutgoingRequest
+from .models import IncomingRequest, OutgoingRequest, Status
 
 from datetime import datetime, timedelta
 import pytz
@@ -48,6 +48,14 @@ def check(request):     #deletes requests which have their time over 2hrs
             out_req.game_status = 'You won'
             out_req.save()
 
+            new_status = Status.objects.create(
+                sender_name = request.user.username,
+                receiver_name = in_req.receiver.username,
+                game_link = out_req.game_link,
+                game_forfieted = True,
+            )
+            new_status.save()
+
     for in_req in in_requests:
         
         if(in_req.game_status=='pending' and in_req.valid_until<time_now):
@@ -77,6 +85,14 @@ def check(request):     #deletes requests which have their time over 2hrs
             
             out_req.game_status = 'You won'
             out_req.save()
+
+            new_status = Status.objects.create(
+                sender_name = out_req.sender.username,
+                receiver_name = request.user.username,
+                game_link = out_req.game_link,
+                game_forfieted = True,
+            )
+            new_status.save()
     return        
 
 
@@ -93,6 +109,11 @@ def loginPage(request):
             user = User.objects.get(email=email)
         except:
             messages.error(request, 'User does not exist')
+        
+        if user.email_verified==False:
+            messages.error(request, 'Email is not verified')
+            return redirect('login')
+        
         user = authenticate(request, email=email, password=password , email_verified=True)
 
         if user is not None:
@@ -188,12 +209,12 @@ def participant_home(request):
         }
         return render(request, 'participant_home.html', context)
 
-def verify(request,token):
+def verify(request,token, email):
     if request.user.is_authenticated:
         messages.success(request, 'You are already logged in')
         return redirect('participant_home')
     try:
-        user = User.objects.get(email_token=token)
+        user = User.objects.get(email=email)
         user.email_verified = True
         user.save()
         messages.success(request, 'Email verified')
@@ -214,20 +235,20 @@ def playGame(request):
         
             #main game logic
         check(request)
+        flag = 0
         if request.method == 'POST'  and request.POST['action']=='make_request':
             num1 = request.POST.get('num1')
             num2 = request.POST.get('num2')
             num3 = request.POST.get('num3')
             points = int(request.POST.get('points'))
-
+            flag = 1
             if(sender.requests_left<=0):
                 messages.success(request, 'Daily Limits for requests reached')
-
             elif(sender.worst_case_points>=int(points)):
                 receiver = User.objects.filter(Q(worst_case_points__gte=int(points)) & ~Q(email=sender.email) & Q(admin=False)).order_by('?').first()
                 game_link = str(uuid.uuid4())
                 if(receiver==None):
-                    messages.error(request, 'No other user is available to play this game, Please wait until there are acive users.')
+                    messages.error(request, 'No other user is available to play this game, Please wait until there are other acive users.')
                 
                 else:
                     OutgoingRequest.objects.create(
@@ -255,10 +276,11 @@ def playGame(request):
                     messages.error(request, 'You do not have enough points or requests to play this game')
                 else:
                     messages.error(request,'Please accept/decline pending requests to play the game')
-        
+            return redirect('dummy')
+
         out_requests = OutgoingRequest.objects.filter(sender=sender)
         in_requests = IncomingRequest.objects.filter(receiver=sender)
-        context = {'user':sender, 'out_requests' : out_requests, 'in_requests' :in_requests}
+        context = {'user':sender, 'out_requests' : out_requests, 'in_requests' :in_requests, 'flag':flag}
         
         return render(request,'playGame.html', context)
     else:
@@ -350,6 +372,7 @@ def Game(request, game_link):
     now = datetime.now(pytz.timezone(TIME_ZONE))
     flag = now<out_req.valid_until
 
+    
     if(not flag):
         messages.error(request,'Time limit exceeded, you lost this game')
         sender.points+=points
@@ -365,12 +388,14 @@ def Game(request, game_link):
     if request.method == 'POST':
         choice = request.POST.get('choice')
         choice = choice=='True'
-        
+        setattr(in_req, 'play'+str(out_req.turn), choice)
         if(game_play[out_req.turn-1] ^ choice): #sender win
             out_req.wins+=1
-            messages.success(request,'Wrong!, You lost this round')
+            if(out_req.turn<3):
+                messages.success(request,'Wrong!, You lost this round')
         else:
-           messages.success(request,'Correct!, You won this round')
+            if(out_req.turn<3):
+                messages.success(request,'Correct!, You won this round')
         
         if(out_req.turn==3):
             if(out_req.wins>1):
@@ -389,10 +414,28 @@ def Game(request, game_link):
             out_req.save()
             sender.save()
             receiver.save()
-            return redirect('playGame')
+            new_status = Status.objects.create(
+                sender_name = sender.username,
+                receiver_name = receiver.username,
+                game_link = game_link,
+                sender_wins = out_req.wins,
+                receiver_wins = 3-out_req.wins,
+                points = points,
+                num1 = out_req.num1,
+                num2 = out_req.num2,
+                num3 = out_req.num3,
+                play1 = in_req.play1,
+                play2 = in_req.play2,
+                play3 = in_req.play3,
+            )
+            print(in_req.play1, in_req.play2, in_req.play3)
+            new_status.save()
+            return redirect('statusGame', game_link=game_link)
+        
         out_req.turn+=1
         out_req.save()
-    
+        in_req.save()
+        return redirect('dummygame', game_link=game_link)
     
 
     context = {
@@ -405,15 +448,36 @@ def Game(request, game_link):
         }    
     return render(request, 'Game.html', context)
 
-# def Status(request, game_link):
-#     if(request.user.is_authenticated == False):
-#         return redirect('login')
+
+
+
+def GameStatus(request, game_link):
+    if(request.user.is_authenticated == False):
+        return redirect('login')
     
-#     try:
-#         out_req = OutgoingRequest.objects.get(game_link=game_link)
-#     except:
-#         messages.error(request,'No such game link exists, maybe the game has expired')
-#         return redirect('playGame')
+    try:
+        out_req = OutgoingRequest.objects.get(game_link=game_link)
+    except:
+        messages.error(request,'No such game link exists, maybe the game has expired')
+        return redirect('playGame')
+    if(out_req.game_status=='pending' or out_req.game_status=='accepted'):
+        messages.error(request,'Game is still pending')
+        return redirect('playGame')
+        
+    try:
+        status = Status.objects.get(game_link=game_link)
+    except:
+        messages.error(request,'No such game link exists')
+        return redirect('playGame')
+    context = {
+        'status':status,
+    }
+    return render(request, 'gameStatus.html', context)
     
     
-#     pass
+#handling form resubmission on refresh
+def dummy(request):
+    return redirect('playGame')
+
+def dummygame(request,game_link):
+    return redirect('Game', game_link=game_link)
