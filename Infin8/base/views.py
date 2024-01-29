@@ -85,7 +85,7 @@ def loginPage(request):
     page = 'login'
     if request.user.is_authenticated:
         return redirect('participant_home') 
-
+    
     if request.method == 'POST':
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
@@ -93,6 +93,9 @@ def loginPage(request):
             user = User.objects.get(email=email)
         except:
             messages.error(request, 'User does not exist')
+        if user.email_verified==False:
+            messages.error(request, 'Email is not verified')
+            return redirect('login')
         user = authenticate(request, email=email, password=password , email_verified=True)
 
         if user is not None:
@@ -119,6 +122,7 @@ def registerPage(request):
             user.email = user.email.lower()
             user.username = user.username.lower()
             user.email_token = str(uuid.uuid4())
+
             send_email_token(user.email, user.email_token)
             user.save()
             messages.success(request, f'Email has been sent to {user.email}')
@@ -188,12 +192,13 @@ def participant_home(request):
         }
         return render(request, 'participant_home.html', context)
 
-def verify(request,token):
+def verify(request,token,email):
+    print(token)
     if request.user.is_authenticated:
         messages.success(request, 'You are already logged in')
         return redirect('participant_home')
     try:
-        user = User.objects.get(email_token=token)
+        user = User.objects.get(email=email)
         user.email_verified = True
         user.save()
         messages.success(request, 'Email verified')
