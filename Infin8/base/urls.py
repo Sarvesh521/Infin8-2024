@@ -15,6 +15,8 @@ urlpatterns = [
     path('playGame/<str:game_link>/', views.confirmGame, name="confirmGame"),
     path('playGame/<str:game_link>/game', views.Game, name="Game"),
     path('playGame/<str:game_link>/status', views.GameStatus, name="statusGame"),
+    path('dummy', views.dummy, name = "dummy"),
+    path('playGame/<str:game_link>/dummy', views.dummygame, name = 'dummygame'),
     
     
     path('password_reset/',auth_views.PasswordResetView.as_view(template_name='password_reset.html'),name='password_reset'),

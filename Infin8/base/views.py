@@ -107,12 +107,13 @@ def loginPage(request):
         password = request.POST.get('password')
         try:
             user = User.objects.get(email=email)
+            if user.email_verified==False:
+                messages.error(request, 'Email is not verified')
+                return redirect('login')
         except:
             messages.error(request, 'User does not exist')
         
-        if user.email_verified==False:
-            messages.error(request, 'Email is not verified')
-            return redirect('login')
+        
         
         user = authenticate(request, email=email, password=password , email_verified=True)
 
@@ -214,7 +215,7 @@ def verify(request,token, email):
         messages.success(request, 'You are already logged in')
         return redirect('participant_home')
     try:
-        user = User.objects.get(email=email)
+        user = User.objects.get(email_token=token)
         user.email_verified = True
         user.save()
         messages.success(request, 'Email verified')
