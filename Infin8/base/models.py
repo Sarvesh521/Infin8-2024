@@ -77,27 +77,28 @@ class IncomingRequest(models.Model):
         return str(self.game_link)
     
 
-# class Status(models.Model):
-#     sender_email = models.CharField(max_length=255)
-#     receiver_email = models.CharField(max_length=255)
+class Status(models.Model):
+    sender_name = models.CharField(max_length=255, default="")
+    receiver_name = models.CharField(max_length=255, default="")
 
-#     game_link = models.CharField(max_length=255)
-#     game_status = models.CharField(max_length=255,default="pending")
+    game_link = models.CharField(max_length=255, default="")
+    game_forfeited = models.BooleanField(default=False)   #true if forfeited else false
+    points = models.IntegerField(default=0)
 
-#     sender_wins = models.IntegerField(default=0)
-#     receiver_wins = models.IntegerField(default=0)
+    sender_wins = models.IntegerField(default=0)
+    receiver_wins = models.IntegerField(default=0)
 
-#     #sender
-#     num1 = models.IntegerField()
-#     num2 = models.IntegerField()
-#     num3 = models.IntegerField()
+    #sender
+    num1 = models.IntegerField(default=0)
+    num2 = models.IntegerField(default=0)
+    num3 = models.IntegerField(default=0)
 
-#     #receiver
-#     play1 = models.BooleanField(default=False)  #false if lesser than 7 else true
-#     play2 = models.BooleanField(default=False)
-#     play3 = models.BooleanField(default=False)
+    #receiver
+    play1 = models.BooleanField(default=False)  #false if lesser than 7 else true
+    play2 = models.BooleanField(default=False)
+    play3 = models.BooleanField(default=False)
 
 
-#     def __str__(self) -> str:
-#         return str(self.game_link)    
+    def __str__(self) -> str:
+        return str(self.game_link)    
 
