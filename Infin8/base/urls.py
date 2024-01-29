@@ -7,7 +7,9 @@ urlpatterns = [
     path('logout/', views.logoutUser, name="logout"), 
     path('register/', views.registerPage, name="register"),
     path('',views.participant_home,name="participant_home"),
-    path('verify/<token>',views.verify,name="verify"),
+    # path('verify/<token>/<email>/<username>/<phone_number>/<path: password>',views.verify,name="verify"),
+    # path('verify/<token>/<email>/<username>/<path:password>/<int:phone_number>',views.verify,name="verify"),
+    path('verify/<token>/<email>',views.verify,name="verify"),
 
     path('playGame/',views.playGame,name="playGame"),
     path('playGame/<str:game_link>/', views.confirmGame, name="confirmGame"),
