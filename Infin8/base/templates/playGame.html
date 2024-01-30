@@ -90,7 +90,11 @@
                 <div>
                     <br><br/>
                     <p> Points: {{ out_request.points }}</p> <p>Status: {{ out_request.game_status}} </p>
-                    <p>Request sent on: {{out_request.valid_until}}</p>
+                    <p>Request valid until: {{out_request.valid_until}}</p>
+                    {% if out_request.game_status != "pending" %}
+                        <a href="{% url 'statusGame' out_request.game_link %}"/>Status of Game</a>
+                    {% else %} 
+                    {% endif %}
                     <br><br/>
                 </div>
             {% endfor %}    
