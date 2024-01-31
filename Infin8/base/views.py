@@ -21,6 +21,7 @@ def check(request):     #deletes requests which have their time over 2hrs
     out_requests = OutgoingRequest.objects.filter(sender=request.user)
     in_requests = IncomingRequest.objects.filter(receiver=request.user)
     time_now = datetime.now(pytz.timezone(TIME_ZONE))   #timezone
+    print(time_now)
     for out_req in out_requests:
         if(out_req.game_status=='pending' and out_req.valid_until<time_now):
             request.user.worst_case_points+=int(out_req.points)
@@ -283,9 +284,11 @@ def playGame(request):
                     messages.error(request,'Please accept/decline pending requests to play the game')
             return redirect('dummy')
 
-        out_requests = OutgoingRequest.objects.filter(sender=sender)
+        out_requests = OutgoingRequest.objects.filter(Q(sender=sender) & (Q(game_status='pending')))
         in_requests = IncomingRequest.objects.filter(receiver=sender)
-        context = {'user':sender, 'out_requests' : out_requests, 'in_requests' :in_requests, 'flag':flag}
+        in_status = Status.objects.filter(Q(receiver_name=request.user.username))
+        out_status = Status.objects.filter(Q(sender_name=request.user.username))
+        context = {'user':sender, 'out_requests' : out_requests, 'in_requests' :in_requests, 'flag':flag, 'in_statuses':in_status, 'out_statuses':out_status}
         
         return render(request,'playGame.html', context)
     else:
@@ -396,7 +399,7 @@ def Game(request, game_link):
         out_req.save()
         sender.save()
         receiver.save()
-        return redirect('statusGame', game_link=game_link)
+        return redirect('playGame') #change to game playgame
     if request.method == 'POST':
         choice = request.POST.get('choice')
         choice = choice=='True'
@@ -442,7 +445,7 @@ def Game(request, game_link):
             )
             print(in_req.play1, in_req.play2, in_req.play3)
             new_status.save()
-            return redirect('statusGame', game_link=game_link)
+            return redirect('playGame')
         
         out_req.turn+=1
         out_req.save()

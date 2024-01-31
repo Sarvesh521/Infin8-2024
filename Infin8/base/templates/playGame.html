@@ -23,7 +23,7 @@
     
     <div class="container">
         <div class="left-column">
-            <h3>Requests Sent</h3>
+            
             <!-- Add your requests content here -->
             <form method="POST" action="{% url 'playGame' %}">
                 {% csrf_token %}
@@ -85,16 +85,13 @@
                 <input type="submit" name="action" value="make_request"/>
                
             </form>
-            
+            <br><br/>
+            <h3>Requests Sent</h3>
             {% for out_request in out_requests %}
                 <div>
                     <br><br/>
                     <p> Points: {{ out_request.points }}</p> <p>Status: {{ out_request.game_status}} </p>
                     <p>Request valid until: {{out_request.valid_until}}</p>
-                    {% if out_request.game_status != "pending" %}
-                        <a href="{% url 'statusGame' out_request.game_link %}"/>Status of Game</a>
-                    {% else %} 
-                    {% endif %}
                     <br><br/>
                 </div>
             {% endfor %}    
@@ -112,6 +109,44 @@
                     
                 {% endfor %}
 
+        </div>
+        <div>
+            <br><br/>
+            <h3>Status of Previous Games played:</h3>
+            <h4>Games you played</h4>
+            {% for in_status in in_statuses %}
+                <div>
+                    <br><br/>
+                    {% if in_status.game_forfeited %}
+                        <p>You forfeited the game against {{in_status.sender_name}} and you lost {{in_status.points}} points</p>
+                    {% else %}
+                        {% if in_status.receiver_wins > in_status.sender_wins %}
+                            <p>You guessed {{in_status.receiver_wins}} correct against {{in_status.sender_name}} and won {{in_status.points}} points</p>
+                        {% else %}
+                            <p>You guessed {{in_status.receiver_wins}} correct against {{in_status.sender_name}} and lost {{in_status.points}} points </p>
+                        {% endif %} 
+                    {% endif %}
+                    <br><br/>                
+                </div>
+            {% endfor %}
+            <br><br/>
+            <h4>Games you sent request for:</h4>
+            {% for out_status in out_statuses %}
+                <div>
+                    <br><br/>
+                    {% if out_status.game_forfeited %}
+                        <p>{{out_status.receiver_name.}} forfeited the game and you won {{out_status.points}} points</p>
+                    {% else %}
+                        {% if out_status.receiver_wins > out_status.sender_wins %}
+                            <p>{{out_status.receiver_name}} guessed {{out_status.receiver_wins}} correct against you and won {{out_status.points}} points</p>
+                        {% else %}
+                            <p>{{out_status.receiver_name}} guessed {{out_status.receiver_wins}} correct against you and lost {{out_status.points}} points </p>
+                        {% endif %} 
+                    {% endif %}
+                    <br><br/>                
+                </div>
+            {% endfor %}
+            <br><br/>
         </div>
     </div>
 
