@@ -259,7 +259,6 @@
                             {% csrf_token %}
                             <label for="points">Choose the number of points to bet:</label>
                             <select class="dropdown" name="points" id="points">
-                                <option value=0>0</option>
                                 <option value=5>5</option>
                                 <option value=10>10</option>
                                 <option value=20>20</option>
@@ -403,7 +402,7 @@
                             <div class="logs">
                                 <br><br/>
                                 {% if out_status.game_forfeited %}
-                                    <p>&#9658;{{out_status.receiver_name.}} forfeited the game and you won {{out_status.points}} points</p>
+                                    <p>&#9658;{{out_status.receiver_name}} forfeited the game and you won {{out_status.points}} points</p>
                                 {% else %}
                                     {% if out_status.receiver_wins > out_status.sender_wins %}
                                         <p>&#9658;{{out_status.receiver_name}} guessed {{out_status.receiver_wins}} correct against you and won {{out_status.points}} points</p>

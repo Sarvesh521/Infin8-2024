@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 import pytz
 
 TIME_ZONE = 'Asia/Kolkata'
+Valid_time_limithr = 2    #in hours
+Valid_time_limitmin = 2   #in minutes
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -18,7 +20,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username','phone_number']
     
-    requests_left = models.IntegerField(default=5)
+    requests_left = models.IntegerField(default=15)
     def __str__(self) -> str:
         return str(self.email)
     
@@ -39,7 +41,8 @@ class Attendance(models.Model):
 
 
 def default_valid_until():
-    return datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(hours=2)
+    #return datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(minutes=Valid_time_limitmin)
+    return datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(hours=Valid_time_limithr)
 
 class OutgoingRequest(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -87,16 +90,6 @@ class Status(models.Model):
 
     sender_wins = models.IntegerField(default=0)
     receiver_wins = models.IntegerField(default=0)
-
-    #sender
-    num1 = models.IntegerField(default=0)
-    num2 = models.IntegerField(default=0)
-    num3 = models.IntegerField(default=0)
-
-    #receiver
-    play1 = models.BooleanField(default=False)  #false if lesser than 7 else true
-    play2 = models.BooleanField(default=False)
-    play3 = models.BooleanField(default=False)
 
 
     def __str__(self) -> str:

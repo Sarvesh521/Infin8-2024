@@ -14,6 +14,7 @@ import pytz
 
 
 TIME_ZONE =  'Asia/Kolkata'
+Game_time = 1   #in min 
 
 
 
@@ -24,9 +25,11 @@ def check(request):     #deletes requests which have their time over 2hrs
     print(time_now)
     for out_req in out_requests:
         if(out_req.game_status=='pending' and out_req.valid_until<time_now):
-            request.user.worst_case_points+=int(out_req.points)
-            request.user.requests_left+=1
-            request.user.save()
+            #try:
+            out_req.sender.worst_case_points+=int(out_req.points)
+            #out_req.sender.points+=int(out_req.points)
+            out_req.sender.requests_left+=1
+            out_req.sender.save()
 
             in_req = IncomingRequest.objects.get(game_link=out_req.game_link)
             in_req.receiver.worst_case_points+=int(out_req.points)
@@ -34,48 +37,64 @@ def check(request):     #deletes requests which have their time over 2hrs
 
             out_req.delete() 
             in_req.delete()
+            # except:
+            #     pass
 
         elif(out_req.game_status=='accepted' and out_req.valid_until<time_now): #when accepted the game but the game isnt completed, then sender wins
+            #try:
             points = int(out_req.points) 
-            try:
-                in_req = IncomingRequest.objects.get(game_link=out_req.game_link)
-                in_req.receiver.points-=points
-                in_req.receiver.save()
-                in_req.delete()
-                new_status = Status.objects.create(
-                    sender_name = request.user.username,
-                    receiver_name = in_req.receiver.username,
-                    game_link = out_req.game_link,
-                    game_forfieted = True,
-                )
-                new_status.save()
-            except:
-                pass
+            
+            in_req = IncomingRequest.objects.get(game_link=out_req.game_link)
+            in_req.receiver.points-=points
+            in_req.receiver.save()
+            in_req.delete()
 
-            request.user.points+=points
-            request.user.worst_case_points+=2*points
-            request.user.save()
+            out_req.sender.points+=points
+            #out_req.sender.points+=2*points
+            out_req.sender.worst_case_points+=2*points
+            out_req.sender.save()
 
-            out_req.game_status = 'You won'
-            out_req.save()
+            link = out_req.game_link
+            out_req.delete() 
+
+            new_status = Status.objects.create(
+                sender_name = request.user.username,
+                receiver_name = in_req.receiver.username,
+                game_link = link,
+                game_forfeited = True,
+                points = points,
+            )
+            new_status.save()
 
             
+
+                     
+
+                # out_req.game_status = 'You won'
+                # out_req.save()
+            # except:
+            #     pass
+
 
     for in_req in in_requests:
         
         if(in_req.game_status=='pending' and in_req.valid_until<time_now):
+            #try:
             in_req.receiver.worst_case_points+=int(in_req.points)
-            request.user.save()
+            in_req.receiver.save()
 
-            out_req = IncomingRequest.objects.get(game_link=in_req.game_link)
-            out_req.receiver.worst_case_points+=int(in_req.points)
-            out_req.receiver.requests_left+=1
-            out_req.receiver.save()
+            out_req = OutgoingRequest.objects.get(game_link=in_req.game_link)
+            out_req.sender.worst_case_points+=int(in_req.points)
+            out_req.sender.requests_left+=1
+            out_req.sender.save()
 
             out_req.delete() 
             in_req.delete()
+            # except:
+            #     pass
 
         elif(in_req.game_status=='accepted' and in_req.valid_until<time_now):   #when accepted the game but the game isnt completed, then sender wins
+            #try:
             out_req = OutgoingRequest.objects.get(game_link=in_req.game_link)
             points = int(in_req.points)
             
@@ -83,21 +102,28 @@ def check(request):     #deletes requests which have their time over 2hrs
             out_req.sender.worst_case_points+=2*points
             out_req.sender.save()
 
-            request.user.points-=points
-            request.user.save()
+            in_req.receiver.points-=points
+            in_req.receiver.save()
             in_req.delete()
-            
-            
-            out_req.game_status = 'You won'
-            out_req.save()
+
+            name = out_req.sender.username
+            link = out_req.game_link
+            out_req.delete()
+            print("deleted outgoing request")
 
             new_status = Status.objects.create(
-                sender_name = out_req.sender.username,
+                sender_name = name,
                 receiver_name = request.user.username,
-                game_link = out_req.game_link,
-                game_forfieted = True,
+                game_link = link,
+                game_forfeited = True,
+                points = points,
             )
+            # out_req.game_status = 'You won'
+            # out_req.save()
             new_status.save()
+                
+            # except:
+            #     pass
     return        
 
 
@@ -167,7 +193,7 @@ def participant_home(request):
         user_1= User.objects.get(email=str(request.user))
         if user_1.admin==True:
             flag=0
-        #check(request)
+        check(request)
         if request.method == 'POST':
                 if flag==1:
                     k_l=list(d.keys())
@@ -240,7 +266,7 @@ def playGame(request):
             return redirect('participant_home')
         
             #main game logic
-        #check(request)
+        check(request)
         flag = 0
         if request.method == 'POST'  and request.POST['action']=='make_request':
             num1 = request.POST.get('num1')
@@ -281,10 +307,11 @@ def playGame(request):
                 if(sender.points<points):
                     messages.error(request, 'You do not have enough points or requests to play this game')
                 else:
-                    messages.error(request,'Please accept/decline pending requests to play the game')
+                    messages.error(request,'Calm down there! According to the worst case scenario of your pending challenges, you don’t have enough points for another challenge. Wait for the result of existing challenges to place another bet.')
             return redirect('dummy')
 
-        out_requests = OutgoingRequest.objects.filter(Q(sender=sender) & (Q(game_status='pending')))
+        # out_requests = OutgoingRequest.objects.filter(Q(sender=sender) & (Q(game_status='pending')))
+        out_requests = OutgoingRequest.objects.filter(sender=sender)
         in_requests = IncomingRequest.objects.filter(receiver=sender)
         in_status = Status.objects.filter(Q(receiver_name=request.user.username))
         out_status = Status.objects.filter(Q(sender_name=request.user.username))
@@ -309,11 +336,12 @@ def confirmGame(request, game_link):  #receiver plays the game
         if(in_req.game_status=='accepted'):
             messages.success(request, 'Please finish the game.')
             return redirect('Game', game_link)
+        
         if(in_req.game_status!='pending'):  #if game is already played
             messages.error(request,'This game has already been played')
             return redirect('playGame')
          
-        user = in_req.receiver
+        user = in_req.receiver  #is the receiver
     
         if(request.user!=user and request.user.admin==False):
             messages.error(request,'You do not have access to this game link')
@@ -324,8 +352,8 @@ def confirmGame(request, game_link):  #receiver plays the game
             messages.success(request,'Game request accepted')
             out_req.game_status='accepted'
             in_req.game_status='accepted'
-            in_req.valid_until = datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(minutes=2)
-            out_req.valid_until = datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(minutes=2)
+            in_req.valid_until = datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(minutes=Game_time)
+            out_req.valid_until = datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(minutes=Game_time)
             out_req.save()
             in_req.save()
             return redirect('Game', game_link=game_link)
@@ -387,7 +415,8 @@ def Game(request, game_link):
         sender.worst_case_points+=2*points
         receiver.points-=points
         in_req.delete()
-        out_req.game_status = 'You won'
+        out_req.delete();
+        # out_req.game_status = 'You won'
         new_status = Status.objects.create(
             sender_name = out_req.sender.username,
             receiver_name = in_req.receiver.username,
@@ -396,14 +425,14 @@ def Game(request, game_link):
             game_forfeited = True,
         )
         new_status.save()
-        out_req.save()
+        #out_req.save()
         sender.save()
         receiver.save()
         return redirect('playGame') #change to game playgame
     if request.method == 'POST':
         choice = request.POST.get('choice')
         choice = choice=='True'
-        setattr(in_req, 'play'+str(out_req.turn), choice)
+        #setattr(in_req, 'play'+str(out_req.turn), choice)
         if(game_play[out_req.turn-1] ^ choice): #sender win
             out_req.wins+=1
             if(out_req.turn<3):
@@ -418,31 +447,35 @@ def Game(request, game_link):
                 sender.points+=points
                 sender.worst_case_points+=2*points
                 receiver.points-=points     
-                out_req.game_status = 'You won'
+                #out_req.game_status = 'You won'
             else:
                 messages.success(request,'You won the game')
                 sender.points-=points
                 receiver.points+=points
                 receiver.worst_case_points+=2*points
-                out_req.game_status = 'You lost'
-            in_req.delete()
-            out_req.save()
+                #out_req.game_status = 'You lost'
+            
+            # out_req.save()
+            wins = out_req.wins
             sender.save()
             receiver.save()
+            in_req.delete()
+            out_req.delete()
             new_status = Status.objects.create(
                 sender_name = sender.username,
                 receiver_name = receiver.username,
                 game_link = game_link,
-                sender_wins = out_req.wins,
-                receiver_wins = 3-out_req.wins,
+                sender_wins = wins,
+                receiver_wins = 3-wins,
                 points = points,
-                num1 = out_req.num1,
-                num2 = out_req.num2,
-                num3 = out_req.num3,
-                play1 = in_req.play1,
-                play2 = in_req.play2,
-                play3 = in_req.play3,
+                # num1 = out_req.num1,
+                # num2 = out_req.num2,
+                # num3 = out_req.num3,
+                # play1 = in_req.play1,
+                # play2 = in_req.play2,
+                # play3 = in_req.play3,
             )
+            
             print(in_req.play1, in_req.play2, in_req.play3)
             new_status.save()
             return redirect('playGame')
@@ -466,35 +499,35 @@ def Game(request, game_link):
 
 
 
-def GameStatus(request, game_link):
-    if(request.user.is_authenticated == False):
-        return redirect('login')
+# def GameStatus(request, game_link):
+#     if(request.user.is_authenticated == False):
+#         return redirect('login')
     
-    try:
-        out_req = OutgoingRequest.objects.get(game_link=game_link)
-    except:
-        messages.error(request,'No such game link exists, maybe the game has expired')
-        return redirect('playGame')
-    if(out_req.game_status=='pending' or out_req.game_status=='accepted'):
-        messages.error(request,'Game is still pending')
-        return redirect('playGame')
+#     try:
+#         out_req = OutgoingRequest.objects.get(game_link=game_link)
+#     except:
+#         messages.error(request,'No such game link exists, maybe the game has expired')
+#         return redirect('playGame')
+#     if(out_req.game_status=='pending' or out_req.game_status=='accepted'):
+#         messages.error(request,'Game is still pending')
+#         return redirect('playGame')
         
-    try:
-        status = Status.objects.get(game_link=game_link)
-    except:
-        messages.error(request,'No such game link exists')
-        return redirect('playGame')
-    flag1 = status.num1>7 ^ status.play1
-    flag2 = status.num2>7 ^ status.play2
-    flag3 = status.num3>7 ^ status.play3
+#     try:
+#         status = Status.objects.get(game_link=game_link)
+#     except:
+#         messages.error(request,'No such game link exists')
+#         return redirect('playGame')
+#     flag1 = status.num1>7 ^ status.play1
+#     flag2 = status.num2>7 ^ status.play2
+#     flag3 = status.num3>7 ^ status.play3
     
-    context = {
-        'status':status, 
-        'flag1':flag1, 
-        'flag2':flag2, 
-        'flag3':flag3,
-    }
-    return render(request, 'gameStatus.html', context)
+#     context = {
+#         'status':status, 
+#         'flag1':flag1, 
+#         'flag2':flag2, 
+#         'flag3':flag3,
+#     }
+#     return render(request, 'gameStatus.html', context)
     
     
 #handling form resubmission on refresh
