@@ -64,7 +64,7 @@ def check(request):     #deletes requests which have their time over 2hrs
     for in_req in in_requests:
         
         if(in_req.game_status=='pending' and in_req.valid_until<time_now):
-            in_req.sender.worst_case_points+=int(in_req.points)
+            in_req.receiver.worst_case_points+=int(in_req.points)
             request.user.save()
 
             out_req = IncomingRequest.objects.get(game_link=in_req.game_link)
@@ -167,7 +167,7 @@ def participant_home(request):
         user_1= User.objects.get(email=str(request.user))
         if user_1.admin==True:
             flag=0
-        check(request)
+        #check(request)
         if request.method == 'POST':
                 if flag==1:
                     k_l=list(d.keys())
@@ -240,7 +240,7 @@ def playGame(request):
             return redirect('participant_home')
         
             #main game logic
-        check(request)
+        #check(request)
         flag = 0
         if request.method == 'POST'  and request.POST['action']=='make_request':
             num1 = request.POST.get('num1')
