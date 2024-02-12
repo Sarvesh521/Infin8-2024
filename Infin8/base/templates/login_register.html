@@ -68,6 +68,22 @@
         color: white;
         margin-bottom: 30px;
     }
+    .screen a{
+        background-color: #881E82;
+        width: fit-content;
+        align-self: center;
+        color: #FDC500;
+        padding:5px;
+        margin:10px;
+        text-decoration: none;
+        font-weight: bolder;
+        border-radius:10px;
+        
+    }
+    .screen a:hover{
+        background-color: #FDC500;
+        color: #881E82;
+    }
     @media (max-width:767px){
         .screen{
             align-items:flex-start;
@@ -105,8 +121,9 @@
         </form>
         <div class="register_block">
             <p>Dont have an account?</p>
-            <a href="{% url 'register' %}">Sign up</a>
+            
         </div>
+        <a href="{% url 'register' %}">Sign up</a>
         <p><a href="{% url "password_reset" %}">Forgotten your password?</a></p>
     </div>
 </div>

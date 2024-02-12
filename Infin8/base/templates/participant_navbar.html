@@ -8,7 +8,7 @@
    .home-container-participant{
        background-color:#FDC500;
        width: 100%;
-       height: 11.5vh;
+       height: 15vh;
        display: flex;
        font-family: 'Poppins', sans-serif;
        align-items: flex-start;
@@ -51,6 +51,13 @@
        font-weight: 400;
 
    }
+   .logos{
+        display: flex;
+        
+    }
+    .logos h1{
+        padding-top:10px;
+    }
    @media (max-width:767px){
        .heading-participant{
            padding: 0;
@@ -60,11 +67,15 @@
        }
        .home-container-participant{
             flex-direction: column;
-            height: 150px;
+            height:200px;
             display: block;
        }
        .hello-text{
            font-size: 20px;
+           inline-size:100%;
+           overflow-wrap: break-word;
+           padding:5px;
+           
        }
        .nav-right{
            width: 100vw;
@@ -74,17 +85,30 @@
            justify-content:left;
            padding-right: 0;  
        }
+       .logos{
+        align-content: center;
+        justify-content: center;
+        padding-bottom:20px;
+       }
    }
 </style>
+{% load static %}
 <div class="home-container-participant">
-   <a href="{% url 'participant_home' %}" class="heading-participant"><h1>Infin8X8Bit</h1></a>
+   <a href="{% url 'participant_home' %}" class="heading-participant">
+    <div class="logos">
+        <img style="border-radius: 100%;height:70px;width:70px;"src="{% static 'img/Infin8 Logo with Theme.png' %}">
+        <h1>X</h1>
+        <img style="border-radius: 100%;height:70px;width:70px;"src="{% static 'img/LogoNew.png' %}"></h1>
+
+        </div>
+   </a>
    
    <div class="nav-right">
        {% if request.user.is_authenticated %}
        <h1 class="hello-text">{{request.user}}</h1>
        <a href="{% url 'logout' %}" class="logout-button">Logout</a>
        {% else %}
-       <a href="{% url 'login' %}">Login</a>
+       <a href="{% url 'login' %}"class="logout-button" >Login</a>
        {% endif %}
    </div>
 </div>

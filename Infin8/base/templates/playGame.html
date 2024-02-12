@@ -26,13 +26,13 @@
         max-width:700px;
         justify-self:flex-start;
         padding:30px;
+        font-weight: bold;
     }
     .card{
-        background-color:#33B8C9;
         height:300px;
         width:300px;
         border-radius:10px;
-        transform:rotate(45deg);
+        
     }
     .score{
         background-color:#FDC500;
@@ -228,7 +228,8 @@
             margin:0px 25px 0px 25px;
         }
     }
-</style>  
+</style> 
+{% load static %} 
 {% include 'participant_main.html' %}
 <div class="screen">
 {% block content %}
@@ -315,7 +316,7 @@
                                 <option value=13>13</option>
                             </select>
                             <br><br>
-                            <input type="submit" name="action" value="make_request"/>
+                            <input type="submit" name="action" value="Make request"/>
                         </form>
                         <br><br/>
                     </div>
@@ -357,9 +358,6 @@
                 <div>
                     <div class="upbox" >
                         <div class="rules">
-                            <h3>How to play</h3>
-                            <p>1. The left column contains requests and the right column contains the requests received </p>
-                            <br>
                             <h3>Rules</h3>
                             <p>1. Users have the option to send and accept challenges. The twist is, the challenges you send will be sent to a random person also registered on the website, the identity of whom will be revealed only after the completion of the game. The receiver doesn’t know your identity either, making it a truly anonymous game.</p>
                             <br>
@@ -367,7 +365,8 @@
                             <br>
                             <p>3. A user can send at max 15 challenges throughout the fest. There is no limit on the number of challenges received.</p>
                         </div>
-                        <div class="card">
+                        <div >
+                            <img class="card"src="{% static 'img/7up.jpeg' %}">
                         </div>
                     </div>   
                 <div class="row3">

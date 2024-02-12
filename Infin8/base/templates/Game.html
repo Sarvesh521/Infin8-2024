@@ -140,11 +140,12 @@
                 </select>
                 <br><br>
                 <input type="submit" name="action" value="submit"/>
-    
+                <div id="countdown"></div>
             </form>
         </div>
+       
     </div>
-    <div id="countdown"></div>
+    
     <script>        
         const validUntil = new Date("{{ valid_until|date:'Y-m-d H:i:s' }}").getTime();
         const z = document.getElementById('countdown');
