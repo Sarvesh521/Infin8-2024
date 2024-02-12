@@ -26,10 +26,13 @@ def check(request):     #deletes requests which have their time over 2hrs
     for out_req in out_requests:
         if(out_req.game_status=='pending' and out_req.valid_until<time_now):
             #try:
-            out_req.sender.worst_case_points+=int(out_req.points)
-            #out_req.sender.points+=int(out_req.points)
-            out_req.sender.requests_left+=1
-            out_req.sender.save()
+            # out_req.sender.worst_case_points+=int(out_req.points)
+            # #out_req.sender.points+=int(out_req.points)
+            # out_req.sender.requests_left+=1
+            # out_req.sender.save()
+            request.user.worst_case_points+=int(out_req.points)
+            request.user.requests_left+=1
+            request.user.save()
 
             in_req = IncomingRequest.objects.get(game_link=out_req.game_link)
             in_req.receiver.worst_case_points+=int(out_req.points)
@@ -49,10 +52,13 @@ def check(request):     #deletes requests which have their time over 2hrs
             in_req.receiver.save()
             in_req.delete()
 
-            out_req.sender.points+=points
-            #out_req.sender.points+=2*points
-            out_req.sender.worst_case_points+=2*points
-            out_req.sender.save()
+            # out_req.sender.points+=points
+            # #out_req.sender.points+=2*points
+            # out_req.sender.worst_case_points+=2*points
+            # out_req.sender.save()
+            request.user.points+=points
+            request.user.worst_case_points+=2*points
+            request.user.save()
 
             link = out_req.game_link
             out_req.delete() 
@@ -80,8 +86,10 @@ def check(request):     #deletes requests which have their time over 2hrs
         
         if(in_req.game_status=='pending' and in_req.valid_until<time_now):
             #try:
-            in_req.receiver.worst_case_points+=int(in_req.points)
-            in_req.receiver.save()
+            # in_req.receiver.worst_case_points+=int(in_req.points)
+            # in_req.receiver.save()
+            request.user.worst_case_points+=int(in_req.points)
+            request.user.save()
 
             out_req = OutgoingRequest.objects.get(game_link=in_req.game_link)
             out_req.sender.worst_case_points+=int(in_req.points)
@@ -102,8 +110,10 @@ def check(request):     #deletes requests which have their time over 2hrs
             out_req.sender.worst_case_points+=2*points
             out_req.sender.save()
 
-            in_req.receiver.points-=points
-            in_req.receiver.save()
+            # in_req.receiver.points-=points
+            # in_req.receiver.save()
+            request.user.points-=points
+            request.user.save()
             in_req.delete()
 
             name = out_req.sender.username
@@ -260,7 +270,7 @@ def verify(request,token, email):
 
 def playGame(request):
     if request.user.is_authenticated:
-        sender= User.objects.get(email=str(request.user))
+        sender= request.user
         if sender.admin==True:
             messages.error(request, 'Admins are not allowed to play the Game')
             return redirect('participant_home')
@@ -315,7 +325,7 @@ def playGame(request):
         in_requests = IncomingRequest.objects.filter(receiver=sender)
         in_status = Status.objects.filter(Q(receiver_name=request.user.username))
         out_status = Status.objects.filter(Q(sender_name=request.user.username))
-        context = {'user':sender, 'out_requests' : out_requests, 'in_requests' :in_requests, 'flag':flag, 'in_statuses':in_status, 'out_statuses':out_status}
+        context = {'user':request.user, 'out_requests' : out_requests, 'in_requests' :in_requests, 'flag':flag, 'in_statuses':in_status, 'out_statuses':out_status}
         
         return render(request,'playGame.html', context)
     else:
