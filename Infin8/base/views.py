@@ -162,7 +162,7 @@ def loginPage(request):
             login(request, user)
             return redirect('participant_home') 
         else:
-            messages.error(request, 'Email OR password does not exit') 
+            messages.error(request, 'Email or password does not exit') 
     context = {'page': page}
     return render(request, 'login_register.html', context)
 
@@ -181,7 +181,7 @@ def registerPage(request):
             user = form.save(commit=False)
             user.email = user.email.lower()
             if 'iiitb.ac.in' in user.email:
-                messages.error(request, 'Please use your personal email id')
+                messages.error(request, 'Please use your personal email id, preferably gmail')
             else:
                 user.username = user.username.lower()
                 user.email_token = str(uuid.uuid4())
@@ -281,19 +281,19 @@ def playGame(request):
             #main game logic
         check(request)
         flag = 0
-        if request.method == 'POST'  and request.POST['action']=='make_request':
+        if request.method == 'POST'  and request.POST['action']=='Make request':
             num1 = request.POST.get('num1')
             num2 = request.POST.get('num2')
             num3 = request.POST.get('num3')
             points = int(request.POST.get('points'))
             flag = 1
             if(sender.requests_left<=0):
-                messages.success(request, 'Daily Limits for requests reached')
+                messages.success(request, 'Limits for sending requests reached')
             elif(sender.worst_case_points>=int(points)):
                 receiver = User.objects.filter(Q(worst_case_points__gte=int(points)) & ~Q(email=sender.email) & Q(admin=False)).order_by('?').first()
                 game_link = str(uuid.uuid4())
                 if(receiver==None):
-                    messages.error(request, 'No other user is available to play this game, Please wait until there are other acive users.')
+                    messages.error(request, 'No other user is available to play this game, Please wait until there are other acive users')
                 
                 else:
                     OutgoingRequest.objects.create(
@@ -318,9 +318,9 @@ def playGame(request):
                     messages.success(request,'Game request sent')
             else:
                 if(sender.points<points):
-                    messages.error(request, 'You do not have enough points or requests to play this game')
+                    messages.error(request, 'You do not have enough points to play this game')
                 else:
-                    messages.error(request,'Calm down there! According to the worst case scenario of your pending challenges, you don’t have enough points for another challenge. Wait for the result of existing challenges to place another bet.')
+                    messages.error(request,'Calm down there! According to the worst case scenario of your pending challenges, you don’t have enough points for another challenge. Wait for the result of existing challenges to place another bet')
             return redirect('dummy')
 
         # out_requests = OutgoingRequest.objects.filter(Q(sender=sender) & (Q(game_status='pending')))
@@ -344,7 +344,7 @@ def confirmGame(request, game_link):  #receiver plays the game
             in_req = IncomingRequest.objects.get(game_link=game_link)
             out_req = OutgoingRequest.objects.get(game_link=game_link)
         except:
-            messages.error(request,'No such game link exists, maybe the game has expired')
+            messages.error(request,'No such game link exists, the game may have expired')
             return redirect('playGame')
         if(in_req.game_status=='accepted'):
             messages.success(request, 'Please finish the game.')
@@ -398,11 +398,11 @@ def Game(request, game_link):
         out_req = OutgoingRequest.objects.get(game_link=game_link)
         in_req = IncomingRequest.objects.get(game_link=game_link)
     except:
-        messages.error(request,'No such game link exists, maybe the game has expired')
+        messages.error(request,'No such game link exists, the game may have expired')
         return redirect('playGame')
 
     if(request.user!=in_req.receiver and request.user.admin==False):
-        return HttpResponse("You Do not have Access to this Game")
+        return HttpResponse("You do not have access to this Game")
 
 
     if(out_req.game_status=='pending'): #HTTP response if already played
@@ -423,7 +423,7 @@ def Game(request, game_link):
 
     
     if(not flag):
-        messages.error(request,'Time limit exceeded, you lost this game')
+        messages.error(request,'Time limit exceeded, you have lost this game')
         sender.points+=points
         sender.worst_case_points+=2*points
         receiver.points-=points
@@ -449,20 +449,20 @@ def Game(request, game_link):
         if(game_play[out_req.turn-1] ^ choice): #sender win
             out_req.wins+=1
             if(out_req.turn<3):
-                messages.success(request,'Wrong!, You lost this round')
+                messages.success(request,'Oops! that was incorrect, You lost this round')
         else:
             if(out_req.turn<3):
-                messages.success(request,'Correct!, You won this round')
+                messages.success(request,'Correct! congratulations, You won this round')
         
         if(out_req.turn==3):
             if(out_req.wins>1):
-                messages.success(request,'You lost the game')
+                messages.success(request,'Oh no! you guessed wrong one too many times, you lost the game')
                 sender.points+=points
                 sender.worst_case_points+=2*points
                 receiver.points-=points     
                 #out_req.game_status = 'You won'
             else:
-                messages.success(request,'You won the game')
+                messages.success(request,'Your gambling addiction has finally paid off! you won the game')
                 sender.points-=points
                 receiver.points+=points
                 receiver.worst_case_points+=2*points
