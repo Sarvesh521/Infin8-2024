@@ -12,10 +12,11 @@ services:
 
   djangoapp:
     container_name: djangoapp
-    image: sarvesh717/infin8:latest
-    command: python manage.py runserver 0.0.0.0:8000
+    # image: sarvesh717/infin8:latest
+    image: todel
+    command: python manage.py runserver 0.0.0.0:8080
     ports:
-      - "8000:8000"
+      - "8080:8080"
     depends_on:
       - mysql
     env_file:
