@@ -1,0 +1,114 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+   *{
+       padding: 0;
+       margin: 0;
+       box-sizing: border-box;
+   }
+   .home-container-participant{
+       background-color:#FDC500;
+       width: 100%;
+       height: 15vh;
+       display: flex;
+       font-family: 'Poppins', sans-serif;
+       align-items: flex-start;
+       justify-content: space-between;
+       padding-top: 10px;
+   }
+   .heading-participant{
+       text-decoration: none;
+       color: #881E82;
+       text-align: left;
+       padding: 10px;
+       width: 20%;
+   }
+   .nav-right{
+       display: flex;
+       align-items: center;
+       justify-content:flex-end;
+       width: 50vw;
+       height: 10vh;
+       padding-right: 30px;
+       color: #881E82;
+
+   }
+   .logout-button{
+       background-color: #881E82;
+       font-size: 20px;
+       color: #FDC500;
+       text-decoration: none;
+       padding: 5px;
+       border-radius:5px;
+       font-weight:1000;
+       margin-left:10px;
+    }
+    .logout-button:hover{
+        background-color:#5c1458;
+        color:#ffdc5c;
+    }
+   .hello-text{
+       font-size: 20px;
+       font-weight: 400;
+
+   }
+   .logos{
+        display: flex;
+        
+    }
+    .logos h1{
+        padding-top:10px;
+    }
+   @media (max-width:767px){
+       .heading-participant{
+           padding: 0;
+           text-align: center;
+           margin: 0;
+           width: 100%;
+       }
+       .home-container-participant{
+            flex-direction: column;
+            height:200px;
+            display: block;
+       }
+       .hello-text{
+           font-size: 20px;
+           inline-size:100%;
+           overflow-wrap: break-word;
+           padding:5px;
+           
+       }
+       .nav-right{
+           width: 100vw;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           justify-content:left;
+           padding-right: 0;  
+       }
+       .logos{
+        align-content: center;
+        justify-content: center;
+        padding-bottom:20px;
+       }
+   }
+</style>
+{% load static %}
+<div class="home-container-participant">
+   <a href="{% url 'participant_home' %}" class="heading-participant">
+    <div class="logos">
+        <img style="border-radius: 100%;height:70px;width:70px;"src="{% static 'img/Infin8 Logo with Theme.png' %}">
+        <h1>X</h1>
+        <img style="border-radius: 100%;height:70px;width:70px;"src="{% static 'img/LogoNew.png' %}"></h1>
+
+        </div>
+   </a>
+   
+   <div class="nav-right">
+       {% if request.user.is_authenticated %}
+       <h1 class="hello-text">{{request.user}}</h1>
+       <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+       {% else %}
+       <a href="{% url 'login' %}"class="logout-button" >Login</a>
+       {% endif %}
+   </div>
+</div>

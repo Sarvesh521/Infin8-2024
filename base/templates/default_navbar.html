@@ -1,0 +1,47 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    *{
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+    .home-container{
+        background-color: #FDC500;
+        width: 100%;
+        height: 15vh;
+        display: flex;
+        padding: 20px;
+    }
+    .heading{
+        text-decoration: none;
+        color:black;
+        font-family: 'Poppins', sans-serif;
+        padding-left: 100px;
+        margin: 20px;
+    }
+    .logos{
+        display: flex;
+    }
+    .logos h1{
+        padding-top:10px;
+    }
+    @media (max-width:767px){
+        .heading{
+            padding: 0;
+            text-align: center;
+            margin: 0;
+            width: 100%;
+        }
+    }
+</style>
+{% load static %}
+<div class="home-container">
+        <a href="" class="heading">
+            <div class="logos">
+            <img style="border-radius: 100%;height:70px;width:70px;"src="{% static 'img/Infin8 Logo with Theme.png' %}">
+            <h1>X</h1>
+            <img style="border-radius: 100%;height:70px;width:70px;"src="{% static 'img/LogoNew.png' %}"></h1>
+
+            </div>
+        </a>
+</div>
