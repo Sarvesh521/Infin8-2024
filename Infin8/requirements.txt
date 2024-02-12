@@ -33,6 +33,7 @@ jinxed==1.2.0
 lxml==4.9.3
 msgpack==1.0.7
 multidict==6.0.4
+mysqlclient==2.2.4
 numpy==1.25.2
 nvm==1.0.21
 openai==0.27.8
@@ -44,6 +45,7 @@ pycparser==2.21
 pyOpenSSL==23.3.0
 pyreadline3==3.4.1
 python-dateutil==2.8.2
+python-decouple==3.8
 python-dotenv==1.0.0
 pytz==2023.3
 redis==5.0.1

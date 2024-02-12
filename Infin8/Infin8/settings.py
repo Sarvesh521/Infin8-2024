@@ -1,3 +1,5 @@
+from decouple import config
+
 """
 Django settings for Infin8 project.
 
@@ -81,8 +83,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'infin8',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'USER': config('USER'),
+        'PASSWORD':config('PASSWORD'),
         'HOST': 'localhost',  # or the hostname where your MySQL server is running
         'PORT': '3306',      # or the port on which your MySQL server is listening
     }
@@ -138,6 +140,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'sarveshkumara123@gmail.com'
-EMAIL_HOST_PASSWORD = 'hhgtuyxmiuteqgxw'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
