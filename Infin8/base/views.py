@@ -180,11 +180,14 @@ def registerPage(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.email = user.email.lower()
-            user.username = user.username.lower()
-            user.email_token = str(uuid.uuid4())
-            send_email_token(user.email, user.email_token)
-            user.save()
-            messages.success(request, f'Email has been sent to {user.email}')
+            if 'iiitb.ac.in' in user.email:
+                messages.error(request, 'Please use your personal email id')
+            else:
+                user.username = user.username.lower()
+                user.email_token = str(uuid.uuid4())
+                send_email_token(user.email, user.email_token)
+                user.save()
+                messages.success(request, f'Email has been sent to {user.email}')
         else:
             messages.error(request, 'An error occurred during registration (Ensure that you are not using the same email id, this error could have been caused by that)')
 

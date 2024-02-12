@@ -9,7 +9,7 @@ Valid_time_limitmin = 2   #in minutes
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    phone_number=models.IntegerField()
+    phone_number=models.CharField(max_length=10,unique=True)
     username=models.CharField(unique=True,max_length=100)
     email_token = models.CharField(max_length=255, default="", blank=True)
     email_verified = models.BooleanField(default=False)
