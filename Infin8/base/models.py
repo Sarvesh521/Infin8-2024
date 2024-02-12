@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import pytz
 
 TIME_ZONE = 'Asia/Kolkata'
-Valid_time_limithr = 2    #in hours
+Valid_time_limithr = 5    #in hours
 Valid_time_limitmin = 2   #in minutes
 
 class User(AbstractUser):
@@ -41,8 +41,8 @@ class Attendance(models.Model):
 
 
 def default_valid_until():
-    return datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(minutes=Valid_time_limitmin)
-    # return datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(hours=Valid_time_limithr)
+    #return datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(minutes=Valid_time_limitmin)
+    return datetime.now(pytz.timezone(TIME_ZONE)) + timedelta(hours=Valid_time_limithr)
 
 class OutgoingRequest(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE)

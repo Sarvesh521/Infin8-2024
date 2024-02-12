@@ -14,7 +14,7 @@ import pytz
 
 
 TIME_ZONE =  'Asia/Kolkata'
-Game_time = 1   #in min 
+Game_time = 2   #in min 
 
 
 
