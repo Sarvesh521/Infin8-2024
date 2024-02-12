@@ -25,115 +25,115 @@ def check(request):     #deletes requests which have their time over 2hrs
     print(time_now)
     for out_req in out_requests:
         if(out_req.game_status=='pending' and out_req.valid_until<time_now):
-            #try:
-            # out_req.sender.worst_case_points+=int(out_req.points)
-            # #out_req.sender.points+=int(out_req.points)
-            # out_req.sender.requests_left+=1
-            # out_req.sender.save()
-            request.user.worst_case_points+=int(out_req.points)
-            request.user.requests_left+=1
-            request.user.save()
+            try:
+                # out_req.sender.worst_case_points+=int(out_req.points)
+                # #out_req.sender.points+=int(out_req.points)
+                # out_req.sender.requests_left+=1
+                # out_req.sender.save()
+                request.user.worst_case_points+=int(out_req.points)
+                request.user.requests_left+=1
+                request.user.save()
 
-            in_req = IncomingRequest.objects.get(game_link=out_req.game_link)
-            in_req.receiver.worst_case_points+=int(out_req.points)
-            in_req.receiver.save()
+                in_req = IncomingRequest.objects.get(game_link=out_req.game_link)
+                in_req.receiver.worst_case_points+=int(out_req.points)
+                in_req.receiver.save()
 
-            out_req.delete() 
-            in_req.delete()
-            # except:
-            #     pass
+                out_req.delete() 
+                in_req.delete()
+            except:
+                pass
 
         elif(out_req.game_status=='accepted' and out_req.valid_until<time_now): #when accepted the game but the game isnt completed, then sender wins
-            #try:
-            points = int(out_req.points) 
-            
-            in_req = IncomingRequest.objects.get(game_link=out_req.game_link)
-            in_req.receiver.points-=points
-            in_req.receiver.save()
-            in_req.delete()
+            try:
+                points = int(out_req.points) 
+                
+                in_req = IncomingRequest.objects.get(game_link=out_req.game_link)
+                in_req.receiver.points-=points
+                in_req.receiver.save()
+                in_req.delete()
 
-            # out_req.sender.points+=points
-            # #out_req.sender.points+=2*points
-            # out_req.sender.worst_case_points+=2*points
-            # out_req.sender.save()
-            request.user.points+=points
-            request.user.worst_case_points+=2*points
-            request.user.save()
+                # out_req.sender.points+=points
+                # #out_req.sender.points+=2*points
+                # out_req.sender.worst_case_points+=2*points
+                # out_req.sender.save()
+                request.user.points+=points
+                request.user.worst_case_points+=2*points
+                request.user.save()
 
-            link = out_req.game_link
-            out_req.delete() 
+                link = out_req.game_link
+                out_req.delete() 
 
-            new_status = Status.objects.create(
-                sender_name = request.user.username,
-                receiver_name = in_req.receiver.username,
-                game_link = link,
-                game_forfeited = True,
-                points = points,
-            )
-            new_status.save()
+                new_status = Status.objects.create(
+                    sender_name = request.user.username,
+                    receiver_name = in_req.receiver.username,
+                    game_link = link,
+                    game_forfeited = True,
+                    points = points,
+                )
+                new_status.save()
 
-            
+                
 
                      
 
                 # out_req.game_status = 'You won'
                 # out_req.save()
-            # except:
-            #     pass
+            except:
+                pass
 
 
     for in_req in in_requests:
         
         if(in_req.game_status=='pending' and in_req.valid_until<time_now):
-            #try:
-            # in_req.receiver.worst_case_points+=int(in_req.points)
-            # in_req.receiver.save()
-            request.user.worst_case_points+=int(in_req.points)
-            request.user.save()
+            try:
+                # in_req.receiver.worst_case_points+=int(in_req.points)
+                # in_req.receiver.save()
+                request.user.worst_case_points+=int(in_req.points)
+                request.user.save()
 
-            out_req = OutgoingRequest.objects.get(game_link=in_req.game_link)
-            out_req.sender.worst_case_points+=int(in_req.points)
-            out_req.sender.requests_left+=1
-            out_req.sender.save()
+                out_req = OutgoingRequest.objects.get(game_link=in_req.game_link)
+                out_req.sender.worst_case_points+=int(in_req.points)
+                out_req.sender.requests_left+=1
+                out_req.sender.save()
 
-            out_req.delete() 
-            in_req.delete()
-            # except:
-            #     pass
+                out_req.delete() 
+                in_req.delete()
+            except:
+                pass
 
         elif(in_req.game_status=='accepted' and in_req.valid_until<time_now):   #when accepted the game but the game isnt completed, then sender wins
-            #try:
-            out_req = OutgoingRequest.objects.get(game_link=in_req.game_link)
-            points = int(in_req.points)
-            
-            out_req.sender.points+=points
-            out_req.sender.worst_case_points+=2*points
-            out_req.sender.save()
-
-            # in_req.receiver.points-=points
-            # in_req.receiver.save()
-            request.user.points-=points
-            request.user.save()
-            in_req.delete()
-
-            name = out_req.sender.username
-            link = out_req.game_link
-            out_req.delete()
-            print("deleted outgoing request")
-
-            new_status = Status.objects.create(
-                sender_name = name,
-                receiver_name = request.user.username,
-                game_link = link,
-                game_forfeited = True,
-                points = points,
-            )
-            # out_req.game_status = 'You won'
-            # out_req.save()
-            new_status.save()
+            try:
+                out_req = OutgoingRequest.objects.get(game_link=in_req.game_link)
+                points = int(in_req.points)
                 
-            # except:
-            #     pass
+                out_req.sender.points+=points
+                out_req.sender.worst_case_points+=2*points
+                out_req.sender.save()
+
+                # in_req.receiver.points-=points
+                # in_req.receiver.save()
+                request.user.points-=points
+                request.user.save()
+                in_req.delete()
+
+                name = out_req.sender.username
+                link = out_req.game_link
+                out_req.delete()
+                print("deleted outgoing request")
+
+                new_status = Status.objects.create(
+                    sender_name = name,
+                    receiver_name = request.user.username,
+                    game_link = link,
+                    game_forfeited = True,
+                    points = points,
+                )
+                # out_req.game_status = 'You won'
+                # out_req.save()
+                new_status.save()
+                
+            except:
+                pass
     return        
 
 
