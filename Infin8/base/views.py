@@ -189,7 +189,7 @@ def registerPage(request):
                 user.save()
                 messages.success(request, f'Email has been sent to {user.email}')
         else:
-            messages.error(request, 'An error occurred during registration (Ensure that you are not using the same email id, this error could have been caused by that)')
+            messages.error(request, 'An error occurred during registration (Ensure that you are not using the same email id or username /Check rules for password has mentioned in the registration form, this error could have been caused by that)')
 
     return render(request, 'login_register.html', {'form': form})
 
