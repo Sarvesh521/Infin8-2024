@@ -144,25 +144,28 @@ def loginPage(request):
         return redirect('participant_home') 
 
     if request.method == 'POST':
-        email = request.POST.get('email').lower()
-        password = request.POST.get('password')
-        try:
-            user = User.objects.get(email=email)
-            if user.email_verified==False:
-                messages.error(request, 'Email is not verified')
-                return redirect('login')
-        except:
-            messages.error(request, 'User does not exist')
-        
-        
-        
-        user = authenticate(request, email=email, password=password , email_verified=True)
-
-        if user is not None:
-            login(request, user)
-            return redirect('participant_home') 
+        if len(user.email<60):   
+            email = request.POST.get('email').lower()
+            password = request.POST.get('password')
+            try:
+                user = User.objects.get(email=email)
+                if user.email_verified==False:
+                    messages.error(request, 'Email is not verified')
+                    return redirect('login')
+            except:
+                messages.error(request, 'User does not exist')
+            
+            
+    
+            user = authenticate(request, email=email, password=password , email_verified=True)
+            
+            if user is not None:
+                login(request, user)
+                return redirect('participant_home') 
+            else:
+                messages.error(request, 'Email or password does not exit') 
         else:
-            messages.error(request, 'Email or password does not exit') 
+            messages.error(request, 'Email is too long, dont you get sneaky')
     context = {'page': page}
     return render(request, 'login_register.html', context)
 
@@ -180,7 +183,9 @@ def registerPage(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.email = user.email.lower()
-            if 'iiitb.ac.in' in user.email:
+            if len(user.email >60):
+                messages.error(request, 'Email is too long, dont you get sneaky')
+            elif 'iiitb.ac.in' in user.email:
                 messages.error(request, 'Please use your personal email id, preferably gmail')
             else:
                 user.username = user.username.lower()
