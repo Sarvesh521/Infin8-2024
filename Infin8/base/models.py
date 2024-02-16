@@ -22,7 +22,7 @@ class User(AbstractUser):
     
     requests_left = models.IntegerField(default=15)
     def __str__(self) -> str:
-        return str(self.username)
+        return str(self.email)
     
 
 class Code(models.Model):
