@@ -144,7 +144,7 @@ def loginPage(request):
         return redirect('participant_home') 
 
     if request.method == 'POST':
-        if len(user.email<60):   
+        if len(user.email)<=60:   
             email = request.POST.get('email').lower()
             password = request.POST.get('password')
             try:
@@ -183,7 +183,7 @@ def registerPage(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.email = user.email.lower()
-            if len(user.email >60):
+            if len(user.email)>60:
                 messages.error(request, 'Email is too long, dont you get sneaky')
             elif 'iiitb.ac.in' in user.email:
                 messages.error(request, 'Please use your personal email id, preferably gmail')
