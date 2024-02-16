@@ -144,8 +144,9 @@ def loginPage(request):
         return redirect('participant_home') 
 
     if request.method == 'POST':
-        if len(user.email)<=60:   
-            email = request.POST.get('email').lower()
+           
+        email = request.POST.get('email').lower()
+        if len(email)<=60:
             password = request.POST.get('password')
             try:
                 user = User.objects.get(email=email)
