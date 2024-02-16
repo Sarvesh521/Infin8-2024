@@ -217,7 +217,11 @@
         <div class="LeaderBoard">
             {% for user in users %}
             <div class="ranking">
+                {% if flag%}
                 <p class="rank">{{ forloop.counter }}. &nbsp;&nbsp;&nbsp; <span class="ranking-name">{{ user.username }}</span><h5> Points: &nbsp;&nbsp;&nbsp;{{ user.points }}</h5>
+                {% else %}
+                <p class="rank">{{ forloop.counter }}. &nbsp;&nbsp;&nbsp; <span class="ranking-name">{{ user.username }} {{user.email}}</span><h5> Points: &nbsp;&nbsp;&nbsp;{{ user.points }}</h5>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
