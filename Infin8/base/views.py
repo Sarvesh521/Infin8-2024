@@ -288,6 +288,11 @@ def playGame(request):
         check(request)
         flag = 0
         if request.method == 'POST'  and request.POST['action']=='Make request':
+            time_now = datetime.now(pytz.timezone(TIME_ZONE))   #timezone
+            if time_now >= datetime(2024, 2, 19):
+                messages.error(request, 'Contest has ended, you cannot make any more requests')
+                return redirect('participant_home')
+            
             num1 = request.POST.get('num1')
             num2 = request.POST.get('num2')
             num3 = request.POST.get('num3')
@@ -345,6 +350,11 @@ def playGame(request):
 
 def confirmGame(request, game_link):  #receiver plays the game
     
+    time_now = datetime.now(pytz.timezone(TIME_ZONE))   #timezone
+    if(time_now >= datetime(2024, 2, 19)):
+        messages.error(request, 'Contest has ended, you cannot play any more games')
+        return redirect('playGame')
+ 
     if(request.user.is_authenticated):
         try:    #if out_req or in_req does not exist redirect to main page
             in_req = IncomingRequest.objects.get(game_link=game_link)
