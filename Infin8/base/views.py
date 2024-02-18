@@ -288,6 +288,10 @@ def playGame(request):
         check(request)
         flag = 0
         if request.method == 'POST'  and request.POST['action']=='Make request':
+            time_now = datetime.now(pytz.timezone(TIME_ZONE))
+            if time_now >= datetime(2024, 2, 19, tzinfo=pytz.timezone(TIME_ZONE)):
+                messages.error(request, 'Contest is over, you cannot send any requests now')
+                return redirect('playGame')
             num1 = request.POST.get('num1')
             num2 = request.POST.get('num2')
             num3 = request.POST.get('num3')
@@ -344,6 +348,10 @@ def playGame(request):
 
 
 def confirmGame(request, game_link):  #receiver plays the game
+    time_now = datetime.now(pytz.timezone(TIME_ZONE))
+    if time_now >= datetime(2024, 2, 19, tzinfo=pytz.timezone(TIME_ZONE)):
+        messages.error(request, 'Contest is over, you cannot play the game now')
+        return redirect('playGame')
     
     if(request.user.is_authenticated):
         try:    #if out_req or in_req does not exist redirect to main page
