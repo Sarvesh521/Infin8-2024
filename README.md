@@ -15,12 +15,6 @@ Our innovative website serves as a tool to streamline attendance tracking for st
 7. **Docker**
 8. **AWS Deployment**
 
-
-## Description
-This project contains a Django application that handles user authentication. It includes a login page where users can enter their email and password to access the system. You can enter passcodes to gain sand (points) and time. The website uses sql database to identify which codes are sand and which are time and increase the timer/points accordingly. The database also ensures that one won't gain points for entering the same code more than once. Finally you can also see a leaderboard once you login. 
-
-The website was used by around 25% students to enter codes.
-
 ## Features
 1. Attendance Tracking : Our website simplifies the process of monitoring attendance allowing organizers to focus on creating memorable experiences and allowing SAC to make informed decisions for future events.
 2. Interactive Game - 7 Up 7 Down (Gambling): Students can enjoy the thrill of gambling without risking real money by playing our interactive game, 7 Up 7 Down. This addictive game offers an engaging experience while adhering to responsible gaming principles.
@@ -40,3 +34,8 @@ Open your web browser and navigate to `localhost:8000` to access the login page.
 ## Deployment
 Go to `https://infin8loyalty.iiitb.net/` to checkout the site!! <br> Edit : The site is currently down.
 
+## Team Members
+1. Sarvesh Kumar . A : Back-end
+2. Dhruv Kothari : Back-end
+3. P.V.S Sukeerithi : Front-end
+4. Rohit Shah : Deployment
