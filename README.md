@@ -28,8 +28,10 @@ https://github.com/Sarvesh521/Infin8-2024/assets/122382587/bc0189c4-0251-47df-a8
 1. Clone the repository: `git clone https://github.com/Sarvesh521/Sands-Of-Time.git`
 2. Navigate into the project directory: `cd Infin8`
 3. Install the required packages: `pip install -r requirements.txt`
-4. Make necessary migrations: <br>`python manage.py make migrations`<br> `python manage.py migrate` 
-5. Run the server: `python manage.py runserver`
+4. Make necessary migrations: <br>`python manage.py make migrations`<br> `python manage.py migrate`
+5. Set app-password and the database: go to `settings.py` and set the fields required to establish a connection between your local database and the website, also set the email-id along with the corresponding app-password
+6. Run the server: `python manage.py runserver`
+
 
 ## Usage
 Open your web browser and navigate to `localhost:8000` to access the login page.
