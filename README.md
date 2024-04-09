@@ -28,7 +28,8 @@ The website was used by around 25% students to enter codes.
 1. Clone the repository: `git clone https://github.com/Sarvesh521/Sands-Of-Time.git`
 2. Navigate into the project directory: `cd Infin8`
 3. Install the required packages: `pip install -r requirements.txt`
-4. Run the server: `python manage.py runserver`
+4. Make necessary migrations: <br>`python manage.py make migrations`<br> `python manage.py migrate` 
+5. Run the server: `python manage.py runserver`
 
 ## Usage
 Open your web browser and navigate to `localhost:8000` to access the login page.
