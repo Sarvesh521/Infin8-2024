@@ -23,6 +23,9 @@ The website was used by around 25% students to enter codes.
 
 ## Features
 1. Attendance Tracking : Our website simplifies the process of monitoring attendance allowing organizers to focus on creating memorable experiences and allowing SAC to make informed decisions for future events.
+2. Interactive Game - 7 Up 7 Down (Gambling): Students can enjoy the thrill of gambling without risking real money by playing our interactive game, 7 Up 7 Down. This addictive game offers an engaging experience while adhering to responsible gaming principles.
+3. User Authentication and Forgotten Password Functionality: Our website ensures secure access with robust user authentication mechanisms. Additionally, we've implemented a forgotten password feature that allows users to reset their passwords conveniently. Leveraging Django's email capabilities, users receive automated email notifications and instructions for resetting their passwords, enhancing the overall security and user experience of our platform.
+4. Attendance Code Points and Leaderboard: Earn points by participating in events and submitting attendance codes! Our platform maintains a dynamic leaderboard, showcasing the top attendees based on accumulated points. This gamified system encourages active engagement within the IIITB community, fostering healthy competition and rewarding students for their involvement in campus activities. Keep track of your progress and climb the leaderboard to earn recognition for your dedication and participation!
 
 ## Installation
 1. Clone the repository: `git clone https://github.com/Sarvesh521/Sands-Of-Time.git`
